@@ -1,0 +1,41 @@
+.container {
+    width: 1024px;
+    height: calc(100vh - 128px);
+
+    margin: 0 auto;
+    padding: 64px;
+
+    text-align: center;
+}
+
+.img-canvas {
+    display: block;
+
+    width: 100%;
+}
+
+.input-label {
+    display: inline-block;
+    padding: .5em .75em;
+    color: slategrey;
+    font-size: inherit;
+    line-height: normal;
+    vertical-align: middle;
+    background-color: lightgray;
+    cursor: pointer;
+    border: 1px solid lightgray;
+    border-radius: .25em;
+}
+
+.input-button {
+    border: 0;
+    background-color: lightslategray;
+
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip:rect(0,0,0,0);
+}
