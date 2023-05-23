@@ -1,15 +1,31 @@
 import * as cv from "@techstark/opencv-js";
 import * as S from './App.module.css';
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
+import {detectHaarFace, loadHaarFaceModels} from "./utils/haarFaceDetection";
 
 
-const processImage = (src) => {
-    cv.imread(src);
-}
 
-// cv.imread("/nklee.jpeg");
 function App() {
     const [imgUrl, setImgUrl] = useState(null);
+    const [faceSize, setFaceSize] = useState(0);
+    const haarFaceImgRef = useRef();
+
+    useEffect(() => {
+        loadHaarFaceModels().catch((e) => { console.error("Model loading has been failed") });
+    }, []);
+
+    const processImage = (imgSrc) => {
+        const img = cv.imread(imgSrc);
+
+        // detect faces using Haar-cascade Detection
+        const haarFaces = detectHaarFace(img);
+        cv.imshow(haarFaceImgRef.current, haarFaces.newImg);
+        setFaceSize(() => haarFaces.facesSize);
+
+        // need to release them manually
+        img.delete();
+        haarFaces.delete();
+    }
 
     return (
         <div className={S["container"]}>
@@ -22,7 +38,6 @@ function App() {
                     name="file"
                     id={"ex_file"}
                     onChange={(e) => {
-                        console.log(e.target.files);
                         if (e.target.files) {
                             setImgUrl(() => URL.createObjectURL(e.target.files[0]));
                         }
@@ -37,6 +52,8 @@ function App() {
                     processImage(e.target);
                 }}
             />
+            <canvas ref={haarFaceImgRef} />
+            {!faceSize.length && <h2>얼굴이 검출되지 않습니다</h2>}
         </div>
     );
 }
