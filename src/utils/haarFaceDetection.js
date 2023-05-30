@@ -1,5 +1,6 @@
 import cv from "@techstark/opencv-js";
 import { loadDataFile } from "./cvDataFile";
+import {findMostFrequentNumber} from "./findMostFrequentNumber";
 
 export async function loadHaarFaceModels() {
     try {
@@ -37,37 +38,50 @@ export function detectHaarFace(img) {
     // detect faces
     const msize = new cv.Size(0, 0);
     faceCascade.detectMultiScale(gray, faces, 1.1, 3, 0, msize, msize);
-    for (let i = 0; i < faces.size(); ++i) {
-        const roiGray = gray.roi(faces.get(i));
-        const roiSrc = newImg.roi(faces.get(i));
-        const point1 = new cv.Point(faces.get(i).x, faces.get(i).y);
+
+    const r = [];
+    const g = [];
+    const b = [];
+    const a = [];
+
+    const roiGray = gray.roi(faces.get(0));
+    const roiSrc = newImg.roi(faces.get(0));
+    const point1 = new cv.Point(faces.get(0).x, faces.get(0).y);
+    const point2 = new cv.Point(
+        faces.get(0).x + faces.get(0).width,
+        faces.get(0).y + faces.get(0).height
+    );
+    cv.rectangle(newImg, point1, point2, [255, 0, 0, 255]);
+
+    // detect eyes in face ROI
+    eyeCascade.detectMultiScale(roiGray, eyes);
+    for (let j = 0; j < eyes.size(); ++j) {
+        const point1 = new cv.Point(eyes.get(j).x, eyes.get(j).y);
         const point2 = new cv.Point(
-            faces.get(i).x + faces.get(i).width,
-            faces.get(i).y + faces.get(i).height
+            eyes.get(j).x + eyes.get(j).width,
+            eyes.get(j).y + eyes.get(j).height
         );
-        cv.rectangle(newImg, point1, point2, [255, 0, 0, 255]);
-        // detect eyes in face ROI
-        eyeCascade.detectMultiScale(roiGray, eyes);
-        for (let j = 0; j < eyes.size(); ++j) {
-            const point1 = new cv.Point(eyes.get(j).x, eyes.get(j).y);
-            const point2 = new cv.Point(
-                eyes.get(j).x + eyes.get(j).width,
-                eyes.get(j).y + eyes.get(j).height
-            );
-            cv.rectangle(roiSrc, point1, point2, [0, 0, 255, 255]);
-        }
-        roiGray.delete();
-        roiSrc.delete();
+        cv.rectangle(roiSrc, point1, point2, [0, 0, 255, 255]);
     }
 
-    gray.delete();
-    faceCascade.delete();
-    eyeCascade.delete();
-    faces.delete();
-    eyes.delete();
+    const x = faces.get(0).x;
+    const y = faces.get(0).y;
+
+    for (let j = x; j < x + faces.get(0).width; j++) {
+        for (let k = y; k < y + faces.get(0).height; k++) {
+            r.push(newImg.ucharPtr(j, k)[0]);
+            g.push(newImg.ucharPtr(j, k)[1]);
+            b.push(newImg.ucharPtr(j, k)[2]);
+            a.push(newImg.ucharPtr(j, k)[3])
+        }
+    }
 
     return {
         newImg: newImg,
-        facesSize: faces.size()
-    }
+        facesSize: faces.size(),
+        r: findMostFrequentNumber(r),
+        g: findMostFrequentNumber(g),
+        b: findMostFrequentNumber(b),
+        a: findMostFrequentNumber(a),
+    };
 }

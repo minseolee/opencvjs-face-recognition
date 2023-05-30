@@ -5,6 +5,11 @@ module.exports = {
             fs: false,
             path: false,
             crypto: false
+        },
+        browser: {
+            fs: false,
+            path: false,
+            crypto: false
         }
     }
 };
