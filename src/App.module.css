@@ -3,7 +3,6 @@
     height: calc(100vh - 128px);
 
     margin: 0 auto;
-    padding: 64px;
 
     text-align: center;
 }
@@ -13,12 +12,14 @@
 
     width: 50%;
     margin: 0 auto;
+
+    margin-bottom: 32px;
 }
 
 .input-label {
     display: inline-block;
     padding: .5em .75em;
-    color: slategrey;
+    color: black;
     font-size: inherit;
     line-height: normal;
     vertical-align: middle;
@@ -26,6 +27,8 @@
     cursor: pointer;
     border: 1px solid lightgray;
     border-radius: .25em;
+    width: 50%;
+    margin-bottom: 16px;
 }
 
 .input-button {

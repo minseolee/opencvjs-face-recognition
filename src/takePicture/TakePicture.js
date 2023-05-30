@@ -1,6 +1,7 @@
+import * as S from './TakePicture.module.css';
 import React, {useState, useEffect, useRef } from 'react';
 
-export default function TakePicture() {
+export default function TakePicture({ picMode, setPicMode }) {
     const videoRef = useRef(null);
 
     const video = document.getElementById('videoCam');
@@ -67,22 +68,22 @@ export default function TakePicture() {
         s.getTracks().forEach((track) => {
             track.stop();
         });
-
+        setPicMode(() => false);
     }
 
     return (
-        <div style={{ position:"absolute", zIndex :"100", width:"1024px", backgroundColor:"white"}} >
+        <div className={S['container']} style={{ display: picMode ? 'block' : 'none' }}>
 
-            <video id="videoCam" ref={videoRef} autoPlay style={{display:CameraState,width:"1024px", height:"768px", webkitTransform:"rotateY(180deg)"}}  />
+            <video id="videoCam" className={S['video-cam']}  ref={videoRef} autoPlay style={{display:CameraState}}  />
 
 
             <canvas id="canvas" width="1024px" height="768px" style={{display: CanvasState}}></canvas>
             {CanvasState === 'none' ?
-                <div onClick={screenShot} style={{display:"flex", justifyContent:"center",alignItems: "center",width:"70px",height:"70px",margin:"10px", borderRadius:"100px",position:"absolute", zIndex :"101", bottom:'5%', left:"46%", cursor:"pointer", backgroundColor:"white"}}>
+                <div onClick={screenShot} className={S['div-area']}>
                     <div style={{textAlign:"center",width:"60px",height:"60px",border:"2px solid", borderRadius:"100px",}}>
                     </div>
                 </div>:
-                <div onClick={GoToCamera} style={{display:"flex", justifyContent:"center",alignItems: "center",width:"70px",height:"70px",margin:"10px", borderRadius:"10px",position:"absolute", zIndex :"101", bottom:'5%', left:"46%", cursor:"pointer", backgroundColor:"white"}}>
+                <div onClick={GoToCamera} className={S['div-area']}>
                     <p>다시 촬영</p>
                 </div>
             }
